@@ -12,6 +12,7 @@ public class App {
         System.out.println(new App().getGreeting());
     }
 
-    public void init() {
+    public int init() {
+	return 1;
     }
 }
