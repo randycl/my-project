@@ -14,8 +14,6 @@ jobs:
       - name: Create Comment
         uses: KeisukeYamashita/create-comment@v1
         with:
-          number: ${{ github.event.issue.number }}
           comment: |
-            Comment for Issue or GitHub Pull Request
-            This is a multi-line test comment
-            With GitHub **Markdown** :sparkles:
+            Issue title must start with 'ABC-'.
+            Auto-closing this issue.
