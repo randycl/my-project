@@ -13,8 +13,13 @@ jobs:
         run: echo '${{ toJSON(github.event) }}' | jq
         shell: bash
       - name: Create Comment
-        uses: KeisukeYamashita/create-comment@v1
+        uses: peter-evans/create-or-update-comment@v1
         with:
-          comment: |
-            Issue title must start with 'ABC-'.
-            Auto-closing this issue.
+          issue-number: ${{ github.event.issue.number }}
+          body: |
+            This is a multi-line test comment
+            - With GitHub **Markdown** :sparkles:
+            - Created by [create-or-update-comment][1]
+            
+            [1]: https://github.com/peter-evans/create-or-update-comment
+          reactions: '+1'
