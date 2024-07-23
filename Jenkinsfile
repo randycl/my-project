@@ -1,12 +1,6 @@
 pipeline {
     agent any
 
-    tools {
-        // Install the JDK and Gradle on the agent
-        jdk 'JDK 11'
-        gradle 'Gradle 6.8'
-    }
-
     stages {
         stage('Checkout') {
             steps {
@@ -15,17 +9,15 @@ pipeline {
             }
         }
         
-        stage('Build') {
+        stage('Build and Test') {
             steps {
-                // Run the Gradle build task
-                sh './gradlew build'
-            }
-        }
-        
-        stage('Test') {
-            steps {
-                // Run the Gradle test task
-                sh './gradlew test'
+                // Build and test the project using Docker
+                script {
+                    docker.build('my-gradle-app').inside {
+                        sh './gradlew build'
+                        sh './gradlew test'
+                    }
+                }
             }
         }
         
@@ -33,6 +25,24 @@ pipeline {
             steps {
                 // Archive the test results
                 junit '**/build/test-results/test/*.xml'
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    // Build the Docker image
+                    docker.build('my-gradle-app', '.')
+                }
+            }
+        }
+        
+        stage('Run Docker Container') {
+            steps {
+                script {
+                    // Run the Docker container
+                    docker.image('my-gradle-app').run('-p 8080:8080')
+                }
             }
         }
     }
@@ -46,4 +56,3 @@ pipeline {
         }
     }
 }
-
