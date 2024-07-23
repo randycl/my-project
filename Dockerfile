@@ -1,25 +1,12 @@
-# Use the official Gradle image to build the app
-FROM gradle:6.8-jdk11 as builder
+FROM gradle:6.8-jdk11 AS builder
 WORKDIR /home/gradle/project
-
-# Copy the gradle wrapper and settings files
-COPY app/gradle gradle
-COPY app/gradlew .
-COPY app/settings.gradle .
-COPY app/build.gradle .
-
-# Copy the source code
-COPY app/src src
-
-# Build the project
+COPY gradle gradle
+COPY gradlew .
+COPY settings.gradle .
+COPY app app
 RUN ./gradlew build
 
-# Use a smaller base image for the final image
 FROM openjdk:11-jre-slim
 WORKDIR /app
-
-# Copy the built jar file from the builder stage
-COPY --from=builder /home/gradle/project/build/libs/*.jar app.jar
-
-# Command to run the app
+COPY --from=builder /home/gradle/project/app/build/libs/*.jar app.jar
 ENTRYPOINT ["java", "-jar", "app.jar"]
