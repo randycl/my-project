@@ -28,12 +28,22 @@ pipeline {
         stage('Run Docker Container') {
             steps {
                 script {
-                    docker.image('my-gradle-app').run('-p 8080:8080')
+                    docker.image('my-gradle-app').run('-d -p 8380:8080 --name my-project')
                 }
             }
         }
     }
     post {
+        always {
+            script {
+                // Cleanup: Remove the container if it exists
+                sh '''
+                if [ $(docker ps -a -q -f name=my-project) ]; then
+                    docker rm -f my-project
+                fi
+                '''
+            }
+        }
         failure {
             echo 'Build or tests failed!'
         }
