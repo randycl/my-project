@@ -29,6 +29,9 @@ pipeline {
             steps {
                 script {
                     docker.image('my-gradle-app').run('-d -p 8380:8080 --name my-project')
+
+                    // Print the Docker logs to the Jenkins console
+                    sh 'docker logs my-project'
                 }
             }
         }
