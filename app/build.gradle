@@ -8,6 +8,7 @@
 
 plugins {
     // Apply the application plugin to add support for building a CLI application in Java.
+    id 'java'
     id 'application'
 }
 
@@ -27,4 +28,12 @@ dependencies {
 application {
     // Define the main class for the application.
     mainClass = 'my.project.App'
+}
+
+jar {
+    manifest {
+        attributes(
+            'Main-Class': 'my.project.App'
+        )
+    }
 }
