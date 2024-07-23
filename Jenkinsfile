@@ -18,7 +18,7 @@ pipeline {
 
                     // Build and test the project using Docker
                     script {
-                        def customImage = docker.build('my-gradle-app', '.')
+                        def customImage = docker.build('my-gradle-app', '../') // Specify the path to Dockerfile
                         customImage.inside {
                             sh './gradlew build'
                             sh './gradlew test'
