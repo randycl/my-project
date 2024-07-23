@@ -1,32 +1,29 @@
-# Use the official Gradle image as the base image
+# Use the official Gradle image to build the application
 FROM gradle:6.8-jdk11 as builder
 
-# Set the working directory in the container
+# Set the working directory
 WORKDIR /home/gradle/project
 
 # Copy the Gradle wrapper and build files
-COPY gradle gradle
-COPY gradlew .
-COPY build.gradle .
-COPY settings.gradle .
+COPY app/gradle gradle
+COPY app/gradlew .
+COPY app/settings.gradle .
+COPY app/build.gradle .
 
 # Copy the source code
-COPY src src
+COPY app/src src
 
 # Run the Gradle build
 RUN ./gradlew build
 
-# Use a new stage for the runtime environment
+# Use the official OpenJDK image to run the application
 FROM openjdk:11-jre-slim
 
-# Set the working directory in the container
+# Set the working directory
 WORKDIR /app
 
-# Copy the built artifacts from the builder stage
+# Copy the built application from the builder stage
 COPY --from=builder /home/gradle/project/build/libs/*.jar app.jar
 
-# Expose the port the app runs on
-EXPOSE 8080
-
-# Command to run the application
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# Run the application
+CMD ["java", "-jar", "app.jar"]
