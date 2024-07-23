@@ -11,11 +11,18 @@ pipeline {
         
         stage('Build and Test') {
             steps {
-                // Build and test the project using Docker
-                script {
-                    docker.build('my-gradle-app').inside {
-                        sh './gradlew build'
-                        sh './gradlew test'
+                dir('app') {
+                    // Print working directory and list files
+                    sh 'pwd'
+                    sh 'ls -la'
+
+                    // Build and test the project using Docker
+                    script {
+                        def customImage = docker.build('my-gradle-app', '.')
+                        customImage.inside {
+                            sh './gradlew build'
+                            sh './gradlew test'
+                        }
                     }
                 }
             }
@@ -24,7 +31,7 @@ pipeline {
         stage('Archive Results') {
             steps {
                 // Archive the test results
-                junit '**/build/test-results/test/*.xml'
+                junit 'app/**/build/test-results/test/*.xml'
             }
         }
 
